@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenFlow — Focus, Plan, Breathe | 3D Experience</title>
+  <meta name="description"
+    content="ZenFlow: An elite 3D productivity experience. Manage tasks, stay focused with Pomodoro sessions, and relax with immersive breathing exercises and ambient soundscapes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- 3D Canvas Background -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Cursor follower glow -->
+  <div class="cursor-glow" id="cursor-glow"></div>
+
+  <!-- Loading screen -->
+  <div class="loading-screen" id="loading-screen">
+    <div class="loader-content">
+      <div class="loader-ring">
+        <svg viewBox="0 0 100 100">
+          <circle class="loader-track" cx="50" cy="50" r="40" />
+          <circle class="loader-fill" cx="50" cy="50" r="40" />
+        </svg>
+      </div>
+      <span class="loader-text">ZenFlow</span>
+      <span class="loader-sub">Initializing 3D Experience...</span>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-3d">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="36" y2="36">
+              <stop stop-color="#a855f7" />
+              <stop offset="1" stop-color="#06b6d4" />
+            </linearGradient>
+            <filter id="logoGlow">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <circle cx="18" cy="18" r="16" stroke="url(#logoGrad)" stroke-width="2" fill="none"
+            filter="url(#logoGlow)" />
+          <path d="M18 8 C14 12, 11 16, 18 26 C25 16, 22 12, 18 8Z" fill="url(#logoGrad)" opacity="0.9" />
+        </svg>
+      </div>
+      <span class="logo-text">ZenFlow</span>
+    </div>
+
+    <ul class="nav-list">
+      <li><button class="nav-btn active" data-view="dashboard" id="nav-dashboard">
+          <div class="nav-icon-wrap">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="7" height="7" rx="1.5" />
+              <rect x="14" y="3" width="7" height="7" rx="1.5" />
+              <rect x="3" y="14" width="7" height="7" rx="1.5" />
+              <rect x="14" y="14" width="7" height="7" rx="1.5" />
+            </svg>
+          </div>
+          <span>Dashboard</span>
+          <div class="nav-indicator"></div>
+        </button></li>
+      <li><button class="nav-btn" data-view="tasks" id="nav-tasks">
+          <div class="nav-icon-wrap">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M9 11l3 3 8-8" />
+              <path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h9" />
+            </svg>
+          </div>
+          <span>Tasks</span>
+          <div class="nav-indicator"></div>
+        </button></li>
+      <li><button class="nav-btn" data-view="focus" id="nav-focus">
+          <div class="nav-icon-wrap">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <span>Focus</span>
+          <div class="nav-indicator"></div>
+        </button></li>
+      <li><button class="nav-btn" data-view="breathe" id="nav-breathe">
+          <div class="nav-icon-wrap">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M12 22c-4-3-8-6-8-10a4 4 0 018 0 4 4 0 018 0c0 4-4 7-8 10z" />
+            </svg>
+          </div>
+          <span>Breathe</span>
+          <div class="nav-indicator"></div>
+        </button></li>
+      <li><button class="nav-btn" data-view="sounds" id="nav-sounds">
+          <div class="nav-icon-wrap">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M9 18V5l12-2v13" />
+              <circle cx="6" cy="18" r="3" />
+              <circle cx="18" cy="16" r="3" />
+            </svg>
+          </div>
+          <span>Sounds</span>
+          <div class="nav-indicator"></div>
+        </button></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button class="theme-toggle" id="theme-toggle" title="Toggle theme"></button>
+    </div>
+  </nav>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="main-content" id="main-content">
+
+    <!-- ===== DASHBOARD VIEW ===== -->
+    <section class="view active" id="view-dashboard">
+      <div class="view-header">
+        <div>
+          <h1 id="greeting" class="hero-title">Good evening</h1>
+          <p class="subtitle" id="date-display"></p>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Stat cards with 3D tilt -->
+        <div class="stat-card glass tilt-card" id="stat-tasks">
+          <div class="card-shine"></div>
+          <div class="stat-icon purple">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M9 11l3 3 8-8" />
+              <path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h9" />
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number counter-animate" id="stat-completed">0</span>
+            <span class="stat-label">Tasks Done Today</span>
+          </div>
+          <div class="stat-glow purple-glow"></div>
+        </div>
+
+        <div class="stat-card glass tilt-card" id="stat-focus">
+          <div class="card-shine"></div>
+          <div class="stat-icon cyan">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number counter-animate" id="stat-focus-mins">0</span>
+            <span class="stat-label">Focus Minutes</span>
+          </div>
+          <div class="stat-glow cyan-glow"></div>
+        </div>
+
+        <div class="stat-card glass tilt-card" id="stat-streak">
+          <div class="card-shine"></div>
+          <div class="stat-icon amber">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number counter-animate" id="stat-streak-count">0</span>
+            <span class="stat-label">Day Streak</span>
+          </div>
+          <div class="stat-glow amber-glow"></div>
+        </div>
+
+        <div class="stat-card glass tilt-card" id="stat-breathe-card">
+          <div class="card-shine"></div>
+          <div class="stat-icon emerald">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M12 22c-4-3-8-6-8-10a4 4 0 018 0 4 4 0 018 0c0 4-4 7-8 10z" />
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number counter-animate" id="stat-breathe-mins">0</span>
+            <span class="stat-label">Mindful Minutes</span>
+          </div>
+          <div class="stat-glow emerald-glow"></div>
+        </div>
+
+        <!-- Quote card -->
+        <div class="quote-card glass tilt-card" id="quote-card">
+          <div class="card-shine"></div>
+          <div class="quote-decoration">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" opacity="0.08">
+              <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
+            </svg>
+          </div>
+          <p class="quote-text" id="quote-text">"The secret of getting ahead is getting started."</p>
+          <span class="quote-author" id="quote-author">— Mark Twain</span>
+        </div>
+
+        <!-- Upcoming tasks -->
+        <div class="upcoming-card glass tilt-card">
+          <div class="card-shine"></div>
+          <h3>Today's Tasks</h3>
+          <ul class="upcoming-list" id="upcoming-list">
+            <li class="empty-state">No tasks yet — add some!</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TASKS VIEW ===== -->
+    <section class="view" id="view-tasks">
+      <div class="view-header">
+        <div>
+          <h1 class="hero-title">My Tasks</h1>
+          <p class="subtitle">Stay organized, stay ahead</p>
+        </div>
+        <div class="tab-group">
+          <button class="tab active" data-tab="daily" id="tab-daily">Daily</button>
+          <button class="tab" data-tab="weekly" id="tab-weekly">Weekly</button>
+          <div class="tab-slider" id="tab-slider"></div>
+        </div>
+      </div>
+
+      <div class="task-input-bar glass" id="task-input-bar">
+        <input type="text" id="task-input" placeholder="What needs to be done?" autocomplete="off">
+        <select id="task-priority">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+        <select id="task-category">
+          <option value="work">🏢 Work</option>
+          <option value="personal">🏠 Personal</option>
+          <option value="health">💪 Health</option>
+          <option value="learning">📚 Learning</option>
+        </select>
+        <button class="btn-add" id="btn-add-task">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Add
+        </button>
+      </div>
+
+      <div class="task-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="completed">Done</button>
+      </div>
+
+      <div class="task-progress-wrap">
+        <div class="task-progress-bar">
+          <div class="task-progress-fill" id="task-progress-fill"></div>
+          <div class="task-progress-glow" id="task-progress-glow"></div>
+        </div>
+        <span class="task-progress-text" id="task-progress-text">0 of 0 done</span>
+      </div>
+
+      <ul class="task-list" id="task-list"></ul>
+    </section>
+
+    <!-- ===== FOCUS TIMER VIEW ===== -->
+    <section class="view" id="view-focus">
+      <div class="view-header">
+        <div>
+          <h1 class="hero-title">Focus Mode</h1>
+          <p class="subtitle">Deep work, no distractions</p>
+        </div>
+      </div>
+      <div class="focus-container">
+        <div class="timer-card glass tilt-card">
+          <div class="card-shine"></div>
+          <div class="timer-tabs">
+            <button class="timer-tab active" data-duration="25" id="timer-25">Focus</button>
+            <button class="timer-tab" data-duration="5" id="timer-short">Short Break</button>
+            <button class="timer-tab" data-duration="15" id="timer-long">Long Break</button>
+            <div class="timer-tab-slider"></div>
+          </div>
+          <div class="timer-ring-wrap">
+            <div class="timer-particles" id="timer-particles"></div>
+            <svg class="timer-ring" viewBox="0 0 260 260">
+              <defs>
+                <linearGradient id="timerGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#a855f7" />
+                  <stop offset="1" stop-color="#06b6d4" />
+                </linearGradient>
+                <filter id="timerGlow">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <circle class="ring-bg" cx="130" cy="130" r="120" />
+              <circle class="ring-progress" id="ring-progress" cx="130" cy="130" r="120"
+                filter="url(#timerGlow)" />
+            </svg>
+            <div class="timer-display">
+              <span class="timer-time" id="timer-time">25:00</span>
+              <span class="timer-label" id="timer-label">Ready to focus</span>
+            </div>
+          </div>
+          <div class="timer-controls">
+            <button class="btn-timer" id="btn-timer-start">
+              <svg class="play-icon" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <polygon points="5,3 19,12 5,21" />
+              </svg>
+              Start
+            </button>
+            <button class="btn-timer-secondary" id="btn-timer-reset">Reset</button>
+          </div>
+          <div class="session-counter">
+            Sessions completed: <strong id="session-count">0</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BREATHE VIEW ===== -->
+    <section class="view" id="view-breathe">
+      <div class="view-header">
+        <div>
+          <h1 class="hero-title">Breathe</h1>
+          <p class="subtitle">Calm your mind, reset your energy</p>
+        </div>
+      </div>
+      <div class="breathe-container">
+        <div class="breathe-patterns">
+          <button class="pattern-btn active" data-pattern="478" id="pattern-478">4-7-8 Relaxing</button>
+          <button class="pattern-btn" data-pattern="box" id="pattern-box">Box Breathing</button>
+          <button class="pattern-btn" data-pattern="22" id="pattern-22">2-2 Energize</button>
+        </div>
+        <div class="breathe-circle-wrap">
+          <div class="breathe-orbit" id="breathe-orbit">
+            <div class="orbit-dot"></div>
+            <div class="orbit-dot"></div>
+            <div class="orbit-dot"></div>
+          </div>
+          <div class="breathe-circle" id="breathe-circle">
+            <div class="breathe-ring"></div>
+            <div class="breathe-ring ring-2"></div>
+            <div class="breathe-ring ring-3"></div>
+            <div class="breathe-inner">
+              <span class="breathe-text" id="breathe-text">Tap to start</span>
+              <span class="breathe-counter" id="breathe-counter"></span>
+            </div>
+          </div>
+        </div>
+        <button class="btn-breathe" id="btn-breathe">Begin Session</button>
+      </div>
+    </section>
+
+    <!-- ===== SOUNDS VIEW ===== -->
+    <section class="view" id="view-sounds">
+      <div class="view-header">
+        <div>
+          <h1 class="hero-title">Ambient Sounds</h1>
+          <p class="subtitle">Create your perfect soundscape</p>
+        </div>
+      </div>
+      <div class="sounds-grid">
+        <div class="sound-card glass tilt-card" data-sound="rain" id="sound-rain">
+          <div class="card-shine"></div>
+          <div class="sound-waves">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="sound-icon">🌧️</div>
+          <span class="sound-name">Rain</span>
+          <input type="range" class="sound-vol" min="0" max="100" value="50">
+          <div class="sound-active-indicator"></div>
+        </div>
+        <div class="sound-card glass tilt-card" data-sound="ocean" id="sound-ocean">
+          <div class="card-shine"></div>
+          <div class="sound-waves">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="sound-icon">🌊</div>
+          <span class="sound-name">Ocean</span>
+          <input type="range" class="sound-vol" min="0" max="100" value="50">
+          <div class="sound-active-indicator"></div>
+        </div>
+        <div class="sound-card glass tilt-card" data-sound="forest" id="sound-forest">
+          <div class="card-shine"></div>
+          <div class="sound-waves">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="sound-icon">🌲</div>
+          <span class="sound-name">Forest</span>
+          <input type="range" class="sound-vol" min="0" max="100" value="50">
+          <div class="sound-active-indicator"></div>
+        </div>
+        <div class="sound-card glass tilt-card" data-sound="fire" id="sound-fire">
+          <div class="card-shine"></div>
+          <div class="sound-waves">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="sound-icon">🔥</div>
+          <span class="sound-name">Fireplace</span>
+          <input type="range" class="sound-vol" min="0" max="100" value="50">
+          <div class="sound-active-indicator"></div>
+        </div>
+        <div class="sound-card glass tilt-card" data-sound="wind" id="sound-wind">
+          <div class="card-shine"></div>
+          <div class="sound-waves">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="sound-icon">💨</div>
+          <span class="sound-name">Wind</span>
+          <input type="range" class="sound-vol" min="0" max="100" value="50">
+          <div class="sound-active-indicator"></div>
+        </div>
+        <div class="sound-card glass tilt-card" data-sound="cafe" id="sound-cafe">
+          <div class="card-shine"></div>
+          <div class="sound-waves">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="sound-icon">☕</div>
+          <span class="sound-name">Café</span>
+          <input type="range" class="sound-vol" min="0" max="100" value="50">
+          <div class="sound-active-indicator"></div>
+        </div>
+      </div>
+      <button class="btn-stop-all" id="btn-stop-sounds">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="6" y="6" width="12" height="12" rx="2" />
+        </svg>
+        Stop All Sounds
+      </button>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
