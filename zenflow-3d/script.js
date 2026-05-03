@@ -1,5 +1,5 @@
 // ============================================================
-// ZenFlow 3D — script.js (First Half)
+// ZenFlow 3D - script.js (First Half)
 // Core setup, 3D background, cursor, loading, state,
 // theme, dashboard, and task management
 // ============================================================
@@ -26,7 +26,7 @@ function save() {
   localStorage.setItem('zf3d_lastDate', STATE.lastDate);
 }
 
-// check streak on load — reset if the user missed more than 1 day
+// check streak on load - reset if the user missed more than 1 day
 (function checkStreak() {
   var today = new Date().toDateString();
   if (STATE.lastDate && STATE.lastDate !== today) {
@@ -58,7 +58,7 @@ function escHTML(s) {
 var QUOTES = [
   { t: "The secret of getting ahead is getting started.", a: "Mark Twain" },
   { t: "Focus on being productive instead of busy.", a: "Tim Ferriss" },
-  { t: "Almost everything will work again if you unplug it for a few minutes — including you.", a: "Anne Lamott" },
+  { t: "Almost everything will work again if you unplug it for a few minutes - including you.", a: "Anne Lamott" },
   { t: "You don't have to see the whole staircase, just take the first step.", a: "MLK Jr." },
   { t: "Your calm mind is the ultimate weapon against your challenges.", a: "Bryant McGill" },
   { t: "Start where you are. Use what you have. Do what you can.", a: "Arthur Ashe" }
@@ -66,7 +66,7 @@ var QUOTES = [
 
 
 // ============================================================
-// THREE.JS — ANIMATED PARTICLE BACKGROUND
+// THREE.JS - ANIMATED PARTICLE BACKGROUND
 // Creates a floating particle field rendered on the bg-canvas
 // ============================================================
 (function initThreeBackground() {
@@ -81,7 +81,7 @@ var QUOTES = [
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  // create particle geometry — 800 randomly placed points
+  // create particle geometry - 800 randomly placed points
   var count = 800;
   var positions = new Float32Array(count * 3);
   var colors = new Float32Array(count * 3);
@@ -148,7 +148,7 @@ var QUOTES = [
 
 
 // ============================================================
-// CURSOR GLOW — radial gradient that follows the mouse
+// CURSOR GLOW - radial gradient that follows the mouse
 // ============================================================
 (function initCursorGlow() {
   var glow = document.getElementById('cursor-glow');
@@ -167,7 +167,7 @@ var QUOTES = [
 
 
 // ============================================================
-// LOADING SCREEN — hide after a short delay
+// LOADING SCREEN - hide after a short delay
 // ============================================================
 window.addEventListener('load', function () {
   setTimeout(function () {
@@ -178,7 +178,7 @@ window.addEventListener('load', function () {
 
 
 // ============================================================
-// 3D TILT CARDS — hover parallax + shine effect
+// 3D TILT CARDS - hover parallax + shine effect
 // Tracks mouse position on each .tilt-card and applies a
 // subtle CSS transform + moves the .card-shine gradient
 // ============================================================
@@ -209,7 +209,7 @@ window.addEventListener('load', function () {
 
 
 // ============================================================
-// SIDEBAR NAVIGATION — switch between views
+// SIDEBAR NAVIGATION - switch between views
 // ============================================================
 document.querySelectorAll('.nav-btn').forEach(function (btn) {
   btn.addEventListener('click', function () {
@@ -229,7 +229,7 @@ document.querySelectorAll('.nav-btn').forEach(function (btn) {
 
 
 // ============================================================
-// THEME TOGGLE — dark / light mode with localStorage
+// THEME TOGGLE - dark / light mode with localStorage
 // ============================================================
 var themeToggle = document.getElementById('theme-toggle');
 var moonSvg = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
@@ -249,7 +249,7 @@ themeToggle.addEventListener('click', function () {
 
 
 // ============================================================
-// DASHBOARD — greeting, date, stats, quote, upcoming tasks
+// DASHBOARD - greeting, date, stats, quote, upcoming tasks
 // ============================================================
 function refreshDashboard() {
   var h = new Date().getHours();
@@ -272,7 +272,7 @@ function refreshDashboard() {
   // random motivational quote
   var q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
   document.getElementById('quote-text').textContent = '"' + q.t + '"';
-  document.getElementById('quote-author').textContent = '— ' + q.a;
+  document.getElementById('quote-author').textContent = '- ' + q.a;
 
   // upcoming (first 5 undone daily tasks)
   var upcoming = [];
@@ -283,7 +283,7 @@ function refreshDashboard() {
     }
   }
   if (!upcoming.length) {
-    list.innerHTML = '<li class="empty-state">No tasks yet — add some!</li>';
+    list.innerHTML = '<li class="empty-state">No tasks yet - add some!</li>';
     return;
   }
   var html = '';
@@ -295,7 +295,7 @@ function refreshDashboard() {
 
 
 // ============================================================
-// TASK MANAGEMENT — add, toggle, delete, filter, render
+// TASK MANAGEMENT - add, toggle, delete, filter, render
 // ============================================================
 var taskInput = document.getElementById('task-input');
 var taskList = document.getElementById('task-list');
@@ -406,7 +406,7 @@ renderTasks();
 
 
 // ============================================================
-// FOCUS TIMER — Pomodoro with SVG ring progress
+// FOCUS TIMER - Pomodoro with SVG ring progress
 // CIRC = circumference of the SVG circle (2 × π × 120)
 // ============================================================
 var timerInterval = null;
@@ -510,7 +510,7 @@ updateTimerDisplay();
 
 
 // ============================================================
-// BREATHING EXERCISE — 3 patterns with animated phase cycling
+// BREATHING EXERCISE - 3 patterns with animated phase cycling
 // Each pattern defines durations (seconds) per phase
 // ============================================================
 var patterns = {
@@ -614,7 +614,7 @@ function runCycle() {
 
 
 // ============================================================
-// AMBIENT SOUNDS — Web Audio API with gain nodes for volume
+// AMBIENT SOUNDS - Web Audio API with gain nodes for volume
 // ============================================================
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 var activeSounds = {};   // tracks currently playing sounds
@@ -707,7 +707,7 @@ document.getElementById('btn-stop-sounds').addEventListener('click', function ()
 
 
 // ============================================================
-// CHIME — short two-tone oscillator played when timer finishes
+// CHIME - short two-tone oscillator played when timer finishes
 // ============================================================
 function playChime() {
   var osc = audioCtx.createOscillator();
