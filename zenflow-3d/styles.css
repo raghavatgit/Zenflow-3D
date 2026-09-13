@@ -649,3 +649,10 @@ body::before{
   .breathe-circle-wrap{width:220px;height:220px}
   .breathe-circle{width:190px;height:190px}
 }
+
+@media (prefers-reduced-motion: reduce) {
+    .card, .breathe-circle {
+        transition: none !important;
+        transform: none !important;
+    }
+}
