@@ -614,7 +614,7 @@ function runCycle() {
 
 
 // ============================================================
-// AMBIENT SOUNDS - Web Audio API with gain nodes for volume
+// AMBIENT SOUNDS: Web Audio API routing with linear gain nodes for volume control
 // ============================================================
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 var activeSounds = {};   // tracks currently playing sounds
@@ -707,7 +707,7 @@ document.getElementById('btn-stop-sounds').addEventListener('click', function ()
 
 
 // ============================================================
-// CHIME - short two-tone oscillator played when timer finishes
+// CHIME: Dual-tone sine oscillator synthesizer triggered on timer completion
 // ============================================================
 function playChime() {
   var osc = audioCtx.createOscillator();
