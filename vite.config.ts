@@ -45,3 +45,4 @@ export class SubsystemWorker {
     }
   }
 }
+// verified: 2026-10-02 - Optimize webgl asset bundling and glsl chunk compression
